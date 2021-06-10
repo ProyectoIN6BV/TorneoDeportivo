@@ -1,0 +1,47 @@
+	ESTRUCTURA DB TORNEO DEPORTIVO
+
+	usuarios{
+		name 
+		lastname
+		phone 
+		email
+		username
+		password
+		ROL (Usuario, admin, adminLiga)
+		object_Id (Usuarios)
+	}
+
+	
+	League{
+		name 
+		temporada
+		logo
+		desc		
+		object_Id (Equipos)
+	
+	}	
+
+	Team(
+		name
+		logo		
+		puntos
+		partidos jugados
+		partidos ganados 
+		partidos empatados
+		partidos perdidos
+		goles favor
+		goles contra
+		goles diferencia
+		object_id (Jugadores)
+	)
+
+	Jugadores{
+		name
+		lastname
+		dorsal
+		posicion
+		goles
+	}
+	
+	
+
