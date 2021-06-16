@@ -34,8 +34,7 @@ ESTRUCTURA DB TORNEO DEPORTIVO
 	
 	Team(
 		name
-		logo	
-		img	
+		logo		
 		puntos
 		partidos jugados
 		partidos ganados 
