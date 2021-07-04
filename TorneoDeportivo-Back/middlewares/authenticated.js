@@ -26,6 +26,8 @@ exports.ensureAuth = (req, res, next)=>{
 exports.ensureAuthAdmin = (req, res, next)=>{
     var payload = req.user;
 
+    console.log("Hola" + payload);
+
     if(payload.role != "ROLE_ADMIN"){
         return res.status(404).send({message: 'No tienes permiso para acceder a esta ruta'});
     }else{

@@ -10,8 +10,8 @@ var userSchema = Schema({
     password: String,
     email: String,
     phone: String,
-    role: String,
-    leagues: [{type: Schema.ObjectId, ref: 'league'}]
+    image: String,
+    role: String
 })
 
 module.exports = mongoose.model('user', userSchema);
