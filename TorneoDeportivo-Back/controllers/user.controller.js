@@ -56,7 +56,7 @@ function login(req, res){
                         if(params.getToken){
                             res.send({
                                 token: jwt.createToken(userFind),
-			                	user: userFindwsd
+			                	user: userFind
                             })
                         }else{
                             return res.send({message: 'Usuario logeado'});
@@ -179,9 +179,123 @@ function updateUser(req, res){
     
 }
 
+function getUsers(req, res){
+    User.find({}).exec((err, users)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(users){
+            return res.send({message: 'Usuarios encontrados', users})
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    })
+}
+
+
+function updateUserAdmin(req, res){
+    let userId = req.params.id;
+    let update = req.body;
+    if(update.password){
+        return res.status(401).send({ message: 'No se puede actualizar la contraseña  desde esta función'});
+    }else{
+        if(update.username){
+            User.findOne({username: update.username.toLowerCase()}, (err, userFind)=>{
+                if(err){
+                    return res.status(500).send({ message: 'Error general'});
+                }else if(userFind){
+                    if(userFind._id == req.user.sub){
+                        User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated)=>{
+                            if(err){
+                                return res.status(500).send({message: 'Error general al actualizar'});
+                            }else if(userUpdated){
+                                return res.send({message: 'Usuario actualizado', userUpdated});
+                            }else{
+                                return res.send({message: 'No se pudo actualizar al usuario'});
+                            }
+                        })
+                    }else{
+                        return res.send({message: 'Nombre de usuario ya en uso'});
+                    }
+                }else{
+                    User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated)=>{
+                        if(err){
+                            return res.status(500).send({message: 'Error general al actualizar'});
+                        }else if(userUpdated){
+                            return res.send({message: 'Usuario actualizado', userUpdated});
+                        }else{
+                            return res.send({message: 'No se pudo actualizar al usuario'});
+                        }
+                    })
+                }
+            })
+        }else{
+            User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated)=>{
+                if(err){
+                    return res.status(500).send({message: 'Error general al actualizar'});
+                }else if(userUpdated){
+                    return res.send({message: 'Usuario actualizado', userUpdated});
+                }else{
+                    return res.send({message: 'No se pudo actualizar al usuario'});
+                }
+            })
+        }
+    }
+    
+    
+}
+
+
+
+function saveUserAdmin(req, res){
+    var user = new User();
+    var params = req.body;
+
+    if(params.name && params.username && params.email && params.password){
+        User.findOne({username:params.username},(err,userFind)=>{
+            if(err){
+                return res.status(500).send({message: 'Error general'})
+            }else if(userFind){
+                return res.send({message: 'Nombre de usuario no disponible'})
+            }else{
+                bcrypt.hash(params.password, null, null,(err,passwordHash)=>{
+                    if(err){
+                        return res.status(500).send({message: 'Error general al comparar contraseña'})
+                    }else if(passwordHash){
+                        user.password = passwordHash;
+                        user.name = params.name;
+                        user.lastname = params.lastname;
+                        user.username = params.username;
+                        user.email = params.email;
+                        user.phone = params.phone;
+                        user.role = params.role; //Opciones: 'ROLE_USER', 'ROLE_ADMINLEAGUE'
+
+                        user.save((err, userSaved)=>{
+                            if(err){
+                                return res.status(500).send({message: 'Error general al guardar usuario'});
+                            }else if(userSaved){
+                                return res.send({message: 'Usuario creado exitosamente', userSaved});
+                            }else{
+                                return res.status(500).send({message: 'No se guardó el usuario'});
+                            }
+                        })
+                    }else{
+                        return res.status(403).send({message: 'La contraseña no se ha encriptado'});
+                    }
+                })
+            }
+        })
+
+    }else{
+       return res.status(403).send({message: 'Ingresa todos los datos obligatorios'});     
+    }
+}
+
 module.exports = {
     createInit,
     login,
     saveUser,
-    updateUser
+    updateUser,
+    getUsers,
+    updateUserAdmin,
+    saveUserAdmin
 }
