@@ -1,37 +1,40 @@
 'use strict'
 
 var Player = require('../models/player.model.js');
+var Teams = require('../models/team.model.js');
 
 
-function createPlayers(req, res){
-    var player = new Player();
+function setPlayerToTeam(req, res){
+    var teamId = req.params.id;
     var params = req.body;
+    var player = new Player();
 
-    if(params.name && params.lastname && params.dorsal && params.position){
-        Player.findOne({name : params.name, lastname : params.lastname, dorsal : params.dorsal}, (err, playerFind)=>{
+
+    if(params.name && params.lastname && params.dorsal && params.position){                
+        player.name = params.title;
+        player.lastname = params.preferences;
+        player.dorsal = params.desc;
+        player.position = params.position;
+
+        player.save((err, playerSaved)=>{
             if(err){
-                return res.status(500).send({message: 'Erro general en el servidor'});
-            }else if(playerFind){
-                return res.send({message: 'Jugador ya existente'});
+                return res.status(500).send({message: 'Error general'});
+            }else if(playerSaved){
+                Teams.findByIdAndUpdate(teamId, {$push:{players: playerSaved._id}}, {new: true}, (err, pushTeam)=>{
+                    if(err){
+                        return res.status(500).send({message: 'Error general al adjuntar jugador al equipo'});
+                    }else if(pushTeam){
+                        return res.send({message: 'Jugador creado y agregado', pushTeam, playerSaved});
+                    }else{
+                        return res.status(404).send({message: 'No se seteo el jugador, pero sí se creó en la BD'});
+                    }
+                }).populate('players')
             }else{
-                        player.name = params.name;
-                        player.lastname = params.lastname;
-                        player.dorsal = params.dorsal;
-                        player.position = params.position;
-
-                        player.save((err, playerSaved)=>{
-                            if(err){
-                                return res.status(500).send({message: 'Error general en el servidor'});
-                            }else if(playerSaved){
-                                return res.send({message: 'Jugador creado exitosamente', playerSaved});
-                            }else{
-                                return res.status(500).send({message: 'No se pudo guardar este registro'});
-                            }
-                        })
-            }        
-        })    
+                return res.status(500).send({message: 'No se guardó el jugador'});
+            }
+        })
     }else{
-        return res.status(403).send({message: 'Por favor. Ingresa los datos obligatorios'});
+        return res.status(401).send({message: 'Por favor envía los datos mínimos para la de tu jugador'})   
     }
 }
 
@@ -102,45 +105,24 @@ function updateMatchPlayer(req, res){
     let playerId = req.params.id;
     let update = req.body;
         
-    if(update.name || update.dorsal || update.lastname || update.position){
-       Player.findOne({name: update.name}, (err, playerFind)=>{
-            if(err){
-                return res.status(500).send({ message: 'Error general'});
-            }else if(playerFind){
-                if(playerFind._id == playerId){   
-                    Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
-                    if(err){
-                        return res.status(500).send({message: 'Error general al actualizar'});
-                    }else if(playerUpdate){
-                        return res.send({message: 'Jugador actualizado', playerUpdate});
-                    }else{
-                        return res.send({message: 'No se pudo actualizar jugador'});
-                        }
-                    })
+    if(update.name || update.dorsal || update.lastname || update.position){ 
+        return res.status(500).send({message: 'No tienes permiso para actualizar estos datos'});
+    }else{            
+            Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
+                if(err){
+                    return res.status(500).send({message: 'Error general al actualizar'});
+                }else if(playerUpdate){
+                    return res.send({message: 'Jugador actualizado', playerUpdate});
                 }else{
-                    return res.send({message: 'Nombre de hotel ya en uso'});    
-                    }
-                    }else{
-                        Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
-                            if(err){
-                                return res.status(500).send({message: 'Error general al actualizar'});
-                            }else if(playerUpdate){
-                                return res.send({message: 'Jugador actualizado', playerUpdate});
-                            }else{
-                                return res.send({message: 'No se pudo actualizar al jugador'});
-                            }
-                        })
+                    return res.send({message: 'No se pudo actualizar jugador'});
                     }
                 })
-        }else{
-            return res.status(500).send({message: 'No tienes permiso para actualizar estos datos'});
-    }
+        }
 }
 
 
-
 module.exports = {
-    createPlayers,
+    setPlayerToTeam,
     updatePlayer,
     removePlayer,
     updateMatchPlayer
