@@ -1,1 +1,149 @@
 'use strict'
+
+var League = require('../models/league.model');
+
+
+function saveLeague(req, res){
+    var params = req.body;
+
+    if(params.name && params.season && params.description && params.firstDate && params.lastDate){        
+        League.findOne({name:params.name}, (err, leagueFind)=>{
+            if(err){
+                return res.status(500).send({message: 'Error general'})
+            }else if(leagueFind){
+                return res.send({message: 'Este nombre no disponible'})
+            }else{
+                league.name = params.name;
+                league.season = params.season;
+                league.description = params.description;
+                league.firstDate = params.firstDate;
+                league.lastDate = params.lastDate;
+
+                league.save((err, saveLeague)=>{
+                    if(err){
+                        return res.status(500).send({message: 'Error en la base de datos'});
+                    }else if(saveLeague){
+                        return res.send({message: 'Creado exitosamente', leagueFind});
+                    }else{
+                        return res.status(500).send({message: 'No se pudo guardar'});
+                    }
+                })
+            }
+        })
+    }
+}
+
+
+function updateLeague(req, res){
+    let leagueId = req.params.id;
+    let update = req.body;
+
+    if(update.name){
+        return res.status(401).send({ message: 'No puede actualizar el nombre desde esta función'});
+    }else{
+        League.findByIdAndUpdate(leagueId, update, {new: true}, (err, leagueUpdate)=>{
+            if(err){
+                return res.status(500).send({message: 'Error general al actualizar'});
+            }else if(leagueUpdate){
+                return res.send({message: 'Liga Actualizada', leagueUpdate});
+            }else{
+                return res.send({message: 'No se pudo actualizar, intenta de nuevo'});
+            }
+        })
+        }
+}
+
+
+function removeLeague(req, res){
+    let leagueId = req.params.id;
+    User.findByIdAndRemove(leagueId, (err, userRemoved)=>{
+        if(err){
+            res.status(500).send({message: 'Error en el servidor'});
+        }else if(userRemoved){
+            res.status(200).send({message: 'Liga eliminado', userRemoved});
+        }else{
+            res.status(200).send({message: 'No existe esta liga'});
+        }
+    })
+}
+
+
+function uploadLeague(req, res){    
+    var leagueId = req.params.id;
+    var fileName = 'Sin imagen';
+
+        if(req.files){
+            //captura la ruta de la imagen
+            var filePath = req.files.image.path;
+            //separa en indices cada carpeta
+            //si se trabaja en linux ('\');
+            var fileSplit = filePath.split('\\');
+            //captura el nombre de la imagen
+            var fileName = fileSplit[2];
+
+            var ext = fileName.split('\.');
+            var fileExt = ext[1];
+
+            if( fileExt == 'png' ||
+                fileExt == 'jpg' ||
+                fileExt == 'jpeg' ||
+                fileExt == 'gif'){
+                    League.findByIdAndUpdate(leagueId, {logo: fileName}, {new:true}, (err, leagueUpdate)=>{
+                        if(err){
+                            return res.status(500).send({message: 'Error general'});
+                        }else if(leagueUpdate){
+                            return res.send({league: leagueUpdate, leagueImage: leagueUpdate.leagueUpdate});
+                        }else{
+                            return res.status(404).send({message: 'No se actualizó'});
+                        }
+                    })
+                }else{
+                    fs.unlink(filePath, (err)=>{
+                        if(err){
+                            return res.status(500).send({message: 'Error al eliminar y la extensión no es válida'});
+                        }else{
+                            return res.status(403).send({message: 'Extensión no válida, y archivo eliminado'});
+                        }
+                    })
+                }
+        }else{
+            return res.status(404).send({message: 'No has subido una imagen'});
+        }
+}
+
+
+function getImageLeague(req, res){
+    var fileName = req.params.fileName;
+    var pathFile = './uploads/users/' + fileName;
+    fs.exists(pathFile, (exists)=>{
+        if(exists){                    
+            return res.sendFile(path.resolve(pathFile))
+        }else{
+           return res.status(404).send({message: 'Imagen inexistente'});
+        }
+    })
+}
+
+function findLeague(req,res){
+    var params = req.body;
+
+    League.findOne({name:params.name}, (err, leagueFind)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'});
+        }else if(leagueFind){
+            return res.send({message: 'Liga encontrada', leagueFind});
+        }else{
+            return res.send({message: 'Liga no encontrada'});
+        }
+    })
+}
+
+
+module.exports = {
+    saveLeague,
+    updateLeague,
+    removeLeague,
+    uploadLeague,
+    getImageLeague,
+    findLeague
+}
