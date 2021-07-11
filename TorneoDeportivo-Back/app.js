@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 var userRoute = require('./routes/user.route');
 var playerRoute = require('./routes/player.route');
-
+var leagueRoute = require('./routes/league.route');
 var api = express();
 
 api.use(bodyParser.urlencoded({extended: false}));
@@ -22,6 +22,6 @@ api.use((req, res, next) => {
 
 api.use('/torneo', userRoute);
 api.use('/torneo', playerRoute);
-
+api.use('/torneo', leagueRoute)
 
 module.exports = api;
