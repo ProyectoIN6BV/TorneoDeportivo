@@ -38,7 +38,7 @@ exports.ensureAuthAdmin = (req, res, next)=>{
 exports.ensureAuthAdminLeague = (req, res, next)=>{
     var payload = req.user;
 
-    if(payload.role != "ROLE_ADMIN" && payload.role != "ROLE_ADMINHOTEL"){
+    if(payload.role != "ROLE_ADMIN" && payload.role != "ROLE_ADMINLEAGUE"){
         return res.status(404).send({message: 'No tienes permiso para acceder a esta ruta'});
     }else{
         return next();

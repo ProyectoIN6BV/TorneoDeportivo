@@ -1,29 +1,29 @@
 'use strict'
 
 var League = require('../models/league.model');
-
+var User = require('../models/user.model');
+var fs = require('fs');
+var path = require('path');
 
 function saveLeague(req, res){
     var params = req.body;
-
-    if(params.name && params.season && params.description && params.firstDate && params.lastDate){        
+    var league = new League();
+    if(params.name && params.season && params.description){        
         League.findOne({name:params.name}, (err, leagueFind)=>{
             if(err){
                 return res.status(500).send({message: 'Error general'})
             }else if(leagueFind){
-                return res.send({message: 'Este nombre no disponible'})
+                return res.send({message: 'Este nombre no está disponible'})
             }else{
                 league.name = params.name;
                 league.season = params.season;
                 league.description = params.description;
-                league.firstDate = params.firstDate;
-                league.lastDate = params.lastDate;
 
                 league.save((err, saveLeague)=>{
                     if(err){
                         return res.status(500).send({message: 'Error en la base de datos'});
                     }else if(saveLeague){
-                        return res.send({message: 'Creado exitosamente', leagueFind});
+                        return res.send({message: 'Creado exitosamente', saveLeague});
                     }else{
                         return res.status(500).send({message: 'No se pudo guardar'});
                     }
@@ -114,7 +114,7 @@ function uploadLeague(req, res){
 
 function getImageLeague(req, res){
     var fileName = req.params.fileName;
-    var pathFile = './uploads/users/' + fileName;
+    var pathFile = './uploads/leagues/' + fileName;
     fs.exists(pathFile, (exists)=>{
         if(exists){                    
             return res.sendFile(path.resolve(pathFile))
@@ -138,6 +138,44 @@ function findLeague(req,res){
     })
 }
 
+//Setear usuarios a hotels
+function setUserLeague(req,res){
+    var userId = req.params.id;
+    var params = req.body;
+
+    User.findById(userId, (err, userFind)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general en el servidor'});
+        }else if(userFind){
+            
+            User.findByIdAndUpdate(userId, {$push:{leagues: params._id}}, {new: true}, (err, pushUser)=>{
+                if(err){
+                    return res.status(500).send({message: "error general"});
+                }else if(pushUser){
+                    return res.send({message: 'se agrego el torneo correctamente', pushUser});
+                }else{
+                    return res.status(404).send({message: 'No se seteo el usuario'});
+                }
+            })
+            
+        }else{
+            return res.status(401).send({message: 'Usuario no encontrado'});
+        }
+
+    })
+}
+
+function getLeagues(req, res){
+    League.find({}).exec((err, leagues)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(leagues){
+            return res.send({message: 'Ligas encontradas', leagues})
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    })
+}
 
 module.exports = {
     saveLeague,
@@ -145,5 +183,7 @@ module.exports = {
     removeLeague,
     uploadLeague,
     getImageLeague,
-    findLeague
+    findLeague,
+    setUserLeague,
+    getLeagues
 }
