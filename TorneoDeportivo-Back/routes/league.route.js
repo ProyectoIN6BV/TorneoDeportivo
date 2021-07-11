@@ -16,5 +16,6 @@ api.post ('/findLeague', leagueController.findLeague);
 api.put('/setUserLeague/:id', leagueController.setUserLeague);
 api.get("/getLeagues", [mdAuth.ensureAuth, mdAuth.ensureAuthAdminLeague],leagueController.getLeagues);
 api.get("/getImageLeague/:fileName",[mdUpload],leagueController.getImageLeague);
+api.get("/getLeagueUser/:id", [mdAuth.ensureAuth], leagueController.getUserLeague );
 
 module.exports = api;

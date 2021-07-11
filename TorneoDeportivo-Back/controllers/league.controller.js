@@ -138,6 +138,22 @@ function findLeague(req,res){
     })
 }
 
+function getUserLeague(req, res){
+    var id = req.params.id;
+
+    User.findById(id, (err, users)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(users){
+            return res.send({message: 'Usuarios encontrados', users})
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    }).populate("leagues");
+}
+
+
+
 //Setear usuarios a hotels
 function setUserLeague(req,res){
     var userId = req.params.id;
@@ -185,5 +201,6 @@ module.exports = {
     getImageLeague,
     findLeague,
     setUserLeague,
-    getLeagues
+    getLeagues,
+    getUserLeague
 }
