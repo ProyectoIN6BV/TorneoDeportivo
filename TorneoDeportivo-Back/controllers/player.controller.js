@@ -11,11 +11,14 @@ function setPlayerToTeam(req, res){
 
 
     if(params.name && params.lastname && params.dorsal && params.position){                
-        player.name = params.title;
-        player.lastname = params.preferences;
-        player.dorsal = params.desc;
+        player.name = params.name;
+        player.lastname = params.lastname;
+        player.dorsal = params.dorsal;
         player.position = params.position;
-
+        player.goal = 0;
+        player.cardA = 0;
+        player.cardR = 0;
+        player.cardT = 0;
         player.save((err, playerSaved)=>{
             if(err){
                 return res.status(500).send({message: 'Error general'});
@@ -101,24 +104,35 @@ function removePlayer(req, res){
     })
 }
 
+function getPlayerTeam(req, res){
+    var id = req.params.id;
+
+    Teams.findById(id, (err, teams)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(teams){
+            return res.send({message: 'Usuarios encontrados', teams})
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    }).populate("players");
+}
 
 function updateMatchPlayer(req, res){
     let playerId = req.params.id;
     let update = req.body;
+             
+        Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
+            if(err){
+                return res.status(500).send({message: 'Error general al actualizar'});
+            }else if(playerUpdate){
+                return res.send({message: 'Jugador actualizado', playerUpdate});
+            }else{
+                return res.send({message: 'No se pudo actualizar jugador'});
+            }
+        })
+
         
-    if(update.name || update.dorsal || update.lastname || update.position){ 
-        return res.status(500).send({message: 'No tienes permiso para actualizar estos datos'});
-    }else{            
-            Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
-                if(err){
-                    return res.status(500).send({message: 'Error general al actualizar'});
-                }else if(playerUpdate){
-                    return res.send({message: 'Jugador actualizado', playerUpdate});
-                }else{
-                    return res.send({message: 'No se pudo actualizar jugador'});
-                    }
-                })
-        }
 }
 
 
@@ -126,5 +140,6 @@ module.exports = {
     setPlayerToTeam,
     updatePlayer,
     removePlayer,
-    updateMatchPlayer
+    updateMatchPlayer,
+    getPlayerTeam
 }

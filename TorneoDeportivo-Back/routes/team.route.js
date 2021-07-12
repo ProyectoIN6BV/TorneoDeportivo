@@ -18,7 +18,7 @@ api.get("/getImageTeam/:fileName",[mdUpload],teamController.getImageTeam);
 api.post ('/findTeam', teamController.findTeam);
 api.put('/setTeamLeague/:id', teamController.setTeamLeague);
 api.get("/getLeagueTeam/:id", [mdAuth.ensureAuth], teamController.getLeagueTeam );
-api.get("/getTeams", [mdAuth.ensureAuth, mdAuth.ensureAuthAdminLeague],teamController.getTeams);
+api.get("/getTeams", [mdAuth.ensureAuth],teamController.getTeams);
 
 
 
