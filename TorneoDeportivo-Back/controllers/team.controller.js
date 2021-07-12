@@ -3,6 +3,8 @@
 var Player = require('../models/player.model.js');
 var Team = require('../models/team.model.js');
 var League = require('../models/league.model.js');
+var fs = require('fs');
+var path = require('path');
 
 
 function saveTeam(req, res){
@@ -17,7 +19,13 @@ function saveTeam(req, res){
                 return res.send({message: 'Este nombre no está disponible'})
             }else{
                 team.name = params.name;
-
+                team.GC = 0;
+                team.GD = 0;
+                team.GF = 0;
+                team.PE = 0;
+                team.PG = 0;
+                team.PJ =0;
+                team.PP =0;
                 team.save((err, saveTeam)=>{
                     if(err){
                         return res.status(500).send({message: 'Error en la base de datos'});
@@ -51,7 +59,7 @@ function updateTeam(req, res){
                     if(err){
                         return res.status(500).send({message: 'Error general al actualizar'});
                     }else if(teamUpdate){
-                        return res.send({message: 'Liga Actualizada', teamUpdate});
+                        return res.send({message: 'Equipo Actualizado', teamUpdate});
                     }else{
                         return res.send({message: 'No se pudo actualizar, intenta de nuevo'});
                     }

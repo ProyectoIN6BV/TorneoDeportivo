@@ -5,7 +5,7 @@ var teamController = require('../controllers/team.controller');
 var mdAuth = require('../middlewares/authenticated');
 
 var connectMultiparty = require('connect-multiparty');
-var mdUpload = connectMultiparty({ uploadDir: './uploads/leagues'});
+var mdUpload = connectMultiparty({ uploadDir: './uploads/teams'});
 var api = express.Router();
 
 var api = express.Router();
