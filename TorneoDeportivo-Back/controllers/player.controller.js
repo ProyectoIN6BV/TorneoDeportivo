@@ -101,6 +101,7 @@ function removePlayer(req, res){
     })
 }
 
+
 function updateMatchPlayer(req, res){
     let playerId = req.params.id;
     let update = req.body;

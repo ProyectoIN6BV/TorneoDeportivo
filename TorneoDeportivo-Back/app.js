@@ -7,6 +7,7 @@ var userRoute = require('./routes/user.route');
 var playerRoute = require('./routes/player.route');
 var leagueRoute = require('./routes/league.route');
 var teamRoute = require('./routes/team.route');
+var matchRouet = require('./routes/match.route');
 
 
 var api = express();
@@ -27,5 +28,6 @@ api.use('/torneo', userRoute);
 api.use('/torneo', playerRoute);
 api.use('/torneo', leagueRoute)
 api.use('/torneo', teamRoute)
+api.use('/torneo', matchRouet)
 
 module.exports = api;
