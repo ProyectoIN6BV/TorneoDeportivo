@@ -56,7 +56,8 @@ function updateLeague(req, res){
 
 function removeLeague(req, res){
     let leagueId = req.params.id;
-    User.findByIdAndRemove(leagueId, (err, userRemoved)=>{
+
+    League.findByIdAndRemove(leagueId, (err, userRemoved)=>{
         if(err){
             res.status(500).send({message: 'Error en el servidor'});
         }else if(userRemoved){
