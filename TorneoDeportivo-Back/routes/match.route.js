@@ -7,6 +7,6 @@ var mdAuth = require('../middlewares/authenticated');
 var api = express.Router();
 
 
-api.get("/createMatch/:id",matchController.createMatch);
+api.post("/createMatch/:id",matchController.createMatch);
 
 module.exports = api;
