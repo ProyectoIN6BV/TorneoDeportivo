@@ -247,7 +247,7 @@ function setPoint(req, res){
                                                 if(err){
                                                     return res.status(500).send({message: 'Error general al actualizar pepe3'});
                                                 }else if(teamUpdate){
-                                                    return res.send({message: 'Resultados cargadors'});
+                                                    return res.send({message: 'Resultados cargados'});
                                                 }else{
                                                     return res.send({message: 'No se pudo actualizar'});
                                                 }
