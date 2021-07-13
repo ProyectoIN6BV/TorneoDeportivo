@@ -11,7 +11,8 @@ var matchSchema = Schema({
     goalsSecond:Number,
     foulOne: Number,
     foulSecond: Number,
-    date: Date
+    date: Date,
+    leagues: [{type: Schema.ObjectId, ref: 'league'}]
 })
 
 module.exports = mongoose.model('match', matchSchema);

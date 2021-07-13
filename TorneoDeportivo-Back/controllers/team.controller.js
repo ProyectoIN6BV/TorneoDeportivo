@@ -26,6 +26,7 @@ function saveTeam(req, res){
                 team.PG = 0;
                 team.PJ =0;
                 team.PP =0;
+                team.points =0;
                 team.save((err, saveTeam)=>{
                     if(err){
                         return res.status(500).send({message: 'Error en la base de datos'});
