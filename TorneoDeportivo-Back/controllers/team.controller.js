@@ -26,6 +26,7 @@ function saveTeam(req, res){
                 team.PG = 0;
                 team.PJ =0;
                 team.PP =0;
+                team.points =0;
                 team.save((err, saveTeam)=>{
                     if(err){
                         return res.status(500).send({message: 'Error en la base de datos'});
@@ -208,6 +209,21 @@ function getTeams(req, res){
     })
 }
 
+function listaPosition(req, res){
+    //var mysort = { teams: -1 };
+    let leagueId = req.params.id;
+
+    League.findById(leagueId, (err,teamFind)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'});
+        }else if(teamFind){
+            return res.send({teamFind});
+        }else{
+            return res.status(500).send({message: 'No se encontraron datos'});
+        }
+    }).limit(10).sort({points : -1}).populate("teams");
+}
+
 module.exports = {
     saveTeam,
     updateTeam,
@@ -217,6 +233,7 @@ module.exports = {
     findTeam,
     setTeamLeague,
     getLeagueTeam,
-    getTeams
+    getTeams,
+    listaPosition
 
 }
