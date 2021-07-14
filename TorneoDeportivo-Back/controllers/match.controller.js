@@ -9,6 +9,34 @@ var Team = require('../models/team.model');
 var robin = require('roundrobin');
 var moment = require('moment');
 
+
+function getSession(req, res){
+    var leagueId = req.params.id;
+    Session.find({leagues: leagueId}, (err, session)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(session){
+            return res.send({message:"se encontraron estas jornadas", session});
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    }).populate("matchs").populate("playersOne");
+}
+
+function getMatches(req, res){
+    var leagueId = req.params.id;
+    Match.find({leagues: leagueId}, (err, match)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(match){
+            return res.send({message:"se encontraron estos partidos", match});
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    }).populate("playersOne").populate("playersSecond");
+}
+
+
 function createMatch(req,res){
     var leagueId = req.params.id;
     let teamsLength = "";
@@ -23,7 +51,9 @@ function createMatch(req,res){
             teamsLength = Object.keys(leagueFind.teams).length;
             let p1 = ((teamsLength*(teamsLength-1))/2)/(teamsLength-1);
             let j1 = teamsLength-1;
-    
+            console.log(teamsLength)
+            console.log(p1);
+            console.log(j1);
            for (let i = 0; i < teamsLength; i++) {
 
                teams[i] = leagueFind.teams[i]; 
@@ -96,7 +126,7 @@ function createMatch(req,res){
                     }
                 })
              }
-             return res.send({message: 'Jornadas generadas exitosamente'});
+             return res.send({message: 'Jornadas generadas exitosamente', date:"exito"});
         }else{
             return res.status(402).send({message: 'No se encontro ningun registro'});
         }
@@ -146,10 +176,11 @@ function removeMatch(req, res){
                     return res.status(402).send({message: 'No se encontro ningun registro'});
                 }
             });
+            return res.send({message: 'Se elimino correctamente', remove:"exito"});
         }else{
             return res.status(402).send({message: 'No se encontro ningun registro'});
         }
-        return res.send({message: 'Se elimino correctamente'});
+        
     }); 
 }
 
@@ -280,5 +311,7 @@ function setPoint(req, res){
 module.exports = {
     createMatch,
     removeMatch,
-    setPoint
+    setPoint,
+    getSession,
+    getMatches
 }

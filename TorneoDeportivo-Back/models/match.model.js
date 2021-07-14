@@ -5,8 +5,8 @@ var Schema = mongoose.Schema;
 
 var matchSchema = Schema({
     matchNumber: String,
-    playersOne: [{type: Schema.ObjectId, ref: 'player'}],
-    playersSecond: [{type: Schema.ObjectId, ref: 'player'}],
+    playersOne: [{type: Schema.ObjectId, ref: 'team'}],
+    playersSecond: [{type: Schema.ObjectId, ref: 'team'}],
     goalsFirst: Number,
     goalsSecond:Number,
     foulOne: Number,
