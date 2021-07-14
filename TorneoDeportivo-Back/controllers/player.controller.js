@@ -62,7 +62,7 @@ function updatePlayer(req, res){
                                 }
                             })
                         }else{
-                            return res.send({message: 'Nombre de hotel ya en uso'});    
+                            return res.send({message: 'Nombre de Jugador ya en uso'});    
                         }
                     }else{
                         Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
@@ -81,7 +81,7 @@ function updatePlayer(req, res){
                     if(err){
                         return res.status(500).send({message: 'Error general al actualizar'});
                     }else if(playerUpdate){
-                        return res.send({message: 'Hotel actualizado', playerUpdate});
+                        return res.send({message: 'Jugador actualizado', playerUpdate});
                     }else{
                         return res.send({message: 'No se pudo actualizar al hotel'});
                     }
@@ -136,10 +136,41 @@ function updateMatchPlayer(req, res){
 }
 
 
+function updatePointsPlayer(req, res){
+    let playerId = req.params.id;
+    let update = req.body;
+        Player.findById(playerId, (err, playerFind)=>{
+            if(err){
+                console.log(err)
+                return res.status(500).send({message: 'Error general al actualizar'});
+            }else if(playerFind){
+                update.goal = update.goal+playerFind.goal;
+                update.cardA = update.cardA+playerFind.cardA;
+                update.cardR = update.cardR + playerFind.cardR;
+                update.cardT = playerFind.cardT+update.cardA+update.cardR;
+                Player.findByIdAndUpdate(playerId, update, {new: true}, (err, playerUpdate)=>{
+                    if(err){
+                        return res.status(500).send({message: 'Error general al actualizar 1 '});
+                    }else if(playerUpdate){
+                        return res.send({message: 'Jugador actualizado', playerUpdate});
+                    }else{
+                        return res.send({message: 'No se pudo actualizar jugador'});
+                    }
+                })
+            }else{
+                return res.send({message: 'No se pudo actualizar jugador'});
+            }
+        })
+
+        
+}
+
+
 module.exports = {
     setPlayerToTeam,
     updatePlayer,
     removePlayer,
     updateMatchPlayer,
-    getPlayerTeam
+    getPlayerTeam,
+    updatePointsPlayer
 }

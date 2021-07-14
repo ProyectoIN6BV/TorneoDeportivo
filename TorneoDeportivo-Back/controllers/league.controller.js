@@ -57,11 +57,11 @@ function updateLeague(req, res){
 function removeLeague(req, res){
     let leagueId = req.params.id;
 
-    League.findByIdAndRemove(leagueId, (err, userRemoved)=>{
+    League.findByIdAndRemove(leagueId, (err, removeLeague)=>{
         if(err){
             res.status(500).send({message: 'Error en el servidor'});
-        }else if(userRemoved){
-            res.status(200).send({message: 'Liga eliminado', userRemoved});
+        }else if(removeLeague){
+            res.status(200).send({message: 'Liga eliminado', removeLeague});
         }else{
             res.status(200).send({message: 'No existe esta liga'});
         }

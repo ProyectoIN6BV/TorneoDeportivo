@@ -21,6 +21,7 @@ api.get("/getLeagueTeam/:id", [mdAuth.ensureAuth], teamController.getLeagueTeam 
 api.get("/getTeams", [mdAuth.ensureAuth, mdAuth.ensureAuthAdminLeague],teamController.getTeams);
 api.get("/listaPosition/:id", teamController.listaPosition);
 
+api.get("/getTeam/:id", [mdAuth.ensureAuth, mdAuth.ensureAuthAdminLeague],teamController.getTeam);
 
 
 module.exports = api;

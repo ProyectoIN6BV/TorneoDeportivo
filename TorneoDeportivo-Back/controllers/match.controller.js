@@ -98,7 +98,8 @@ function createMatch(req,res){
                                     match.playersSecond = robinMatches[jornada][partido][1];                    
                                     match.date = new_date2;
                                     match.leagues = leagueId;
-
+                                    match.goalsFirst=0;
+                                    match.goalsSecond=0;
                                     match.save((err, matchSaved)=>{
                                         if(err){
                                             return res.status(500).send({message: 'Error general'});
@@ -195,7 +196,8 @@ function setPoint(req, res){
     // goles primer Equipo  ---    goalsFirst
     // goles segundo equipo  ---    goalsSecond
     // confia en mi todo estara bien :)
-
+    console.log(update)
+    console.log(matchId)
     Match.findById(matchId, (err, matchFind)=>{
         if(err){
             return res.status(500).send({message: 'Error general'});
@@ -230,7 +232,7 @@ function setPoint(req, res){
                             update.PJ = Number.parseInt(teamOne.PJ)+1;
                             update.GF = Number.parseInt(teamOne.GF) + Number.parseInt(update.goalsFirst);
                             update.GC =  Number.parseInt(teamOne.GC) +  Number.parseInt(update.goalsSecond);
-                            update.GD =  Number.parseInt(teamOne.GD) +  Number.parseInt(update.GF) -  Number.parseInt(update.GC);
+                            update.GD =    Number.parseInt(update.GF) -  Number.parseInt(update.GC);
 
                             Team.findByIdAndUpdate(matchFind.playersOne, update, {new: true}, (err, teamUpdate)=>{
                                 if(err){
@@ -269,16 +271,16 @@ function setPoint(req, res){
                                                 update.PE = teamTwo.PE+1;
                                             }
                                             
-                                            update.PJ = Number.parseInt(teamTwo.PJ)+1;
-                                            update.GF = Number.parseInt(teamTwo.GF) + Number.parseInt(update.goalsSecond);
+                                            update.PJ =  Number.parseInt(teamTwo.PJ)+1;
+                                            update.GF =  Number.parseInt(teamTwo.GF) + Number.parseInt(update.goalsSecond);
                                             update.GC =  Number.parseInt(teamTwo.GC) +  Number.parseInt(update.goalsFirst);
-                                            update.GD =  Number.parseInt(teamTwo.GD) +  Number.parseInt(update.GF) -  Number.parseInt(update.GC);
+                                            update.GD =  Number.parseInt(update.GF) -  Number.parseInt(update.GC);
                 
                                             Team.findByIdAndUpdate(matchFind.playersSecond, update, {new: true}, (err, teamUpdate)=>{
                                                 if(err){
                                                     return res.status(500).send({message: 'Error general al actualizar pepe3'});
                                                 }else if(teamUpdate){
-                                                    return res.send({message: 'Resultados cargados'});
+                                                    return res.send({message: 'Resultados cargados', teamUpdate});
                                                 }else{
                                                     return res.send({message: 'No se pudo actualizar'});
                                                 }

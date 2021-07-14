@@ -10,7 +10,7 @@ var api = express.Router();
 
 api.post ('/saveLeague', leagueController.saveLeague);
 api.put('/updateLeague/:id', leagueController.updateLeague);
-api.put('/removeLeague', leagueController.removeLeague);
+api.put('/removeLeague/:id', leagueController.removeLeague);
 api.put('/uploadLeague/:id',[mdUpload] ,leagueController.uploadLeague);
 api.post ('/findLeague', leagueController.findLeague);
 api.put('/setUserLeague/:id', leagueController.setUserLeague);

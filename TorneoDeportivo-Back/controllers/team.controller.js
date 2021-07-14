@@ -209,6 +209,20 @@ function getTeams(req, res){
     })
 }
 
+function getTeam(req, res){
+    var id = req.params.id;
+    Team.findById(id, (err, team)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(team){
+            
+            return res.send({message: 'Equipos encontrados', team})
+        }else{
+            return res.status(404).send({message: 'No hay registros'})
+        }
+    }).populate("players")
+}
+
 function listaPosition(req, res){
     //var mysort = { teams: -1 };
     let leagueId = req.params.id;
@@ -217,11 +231,19 @@ function listaPosition(req, res){
         if(err){
             return res.status(500).send({message: 'Error general'});
         }else if(teamFind){
-            return res.send({teamFind});
+            Team.find({_id:teamFind.teams}, (err, teams)=>{
+                if(err){
+                    return res.status(500).send({message: 'Error general'});
+                }else if(teams){
+                    return res.send({message: 'datos: ', teams});
+                }else{
+                    return res.status(500).send({message: 'No se encontraron datos'});
+                }
+            }).sort({points:-1}).sort({GD:-1})
         }else{
             return res.status(500).send({message: 'No se encontraron datos'});
         }
-    }).limit(10).sort({points : -1}).populate("teams");
+    });
 }
 
 module.exports = {
@@ -234,6 +256,7 @@ module.exports = {
     setTeamLeague,
     getLeagueTeam,
     getTeams,
-    listaPosition
+    listaPosition,
+    getTeam
 
 }

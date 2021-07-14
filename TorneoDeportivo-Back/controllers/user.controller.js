@@ -1,5 +1,5 @@
 'use strict'
-
+var League = require('../models/league.model')
 var User = require('../models/user.model');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../services/jwt');
@@ -290,6 +290,29 @@ function saveUserAdmin(req, res){
     }
 }
 
+function removeUser(req,res){
+    let id = req.params.id;
+
+    User.findByIdAndRemove(id, (err, userRemoved)=>{
+        if(err){
+            return res.status(500).send({message:"error general"})
+        }else if(userRemoved){
+            League.remove({_id:userRemoved._id},(err, leagueRemoved)=>{
+                if(err){
+                    return res.status(500).send({message:"error general"})
+                }else if(leagueRemoved){
+                    return res.send({message:"se ha eliminado correctamente", leagueRemoved})
+                }else{
+                    return res.status(402).send({message:"No se ha encontrado ligas para eliminar"});        
+                }
+            })
+        }else{
+            return res.status(402).send({message:"No se ha encontrado el usuario"});
+        }
+    })
+
+}
+
 module.exports = {
     createInit,
     login,
@@ -297,5 +320,6 @@ module.exports = {
     updateUser,
     getUsers,
     updateUserAdmin,
-    saveUserAdmin
+    saveUserAdmin,
+    removeUser
 }
