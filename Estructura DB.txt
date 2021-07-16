@@ -1,0 +1,100 @@
+ESTRUCTURA DB TORNEO DEPORTIVO
+
+	usuarios{
+		name 
+		lastname
+		phone 
+		email
+		username
+		password
+		ROL (Usuario, admin, adminLiga)
+		object_Id (League)
+	}
+	
+	//funcion register , login, usuarioInit, listarLigaPorUsuario, editAccount
+	//funciones admin(Editar, Eliminar, Visualizar o Agregar un Administrador nuevo)
+	
+	
+	League{
+		name 
+		temporada
+		logo
+		desc	
+		FechaInicio
+		FechaFinal	
+		object_Id (Team)
+		object_Id (Jornada)
+	}	
+
+	//  máximo 10 equipos
+	// gráfica por equipo		
+	//funcion agregar, editar, eliminar, (TODO POR USUARIO)
+	
+	// funciones por Admin (Editar, Eliminar, Visualizar o	Agregar un nuevo Torneo)
+	
+	Team(
+		name
+		logo		
+		puntos
+		partidos jugados
+		partidos ganados 
+		partidos empatados
+		partidos perdidos
+		goles favor
+		goles contra
+		goles diferencia
+		object_id (Jugadores)
+	)
+	
+	//funcion agregar, editar, eliminar, (TODO POR LIGA)
+	//Puede crear, visualizar, editar y eliminar equipos de la liga, únicamente las
+	que él ha creado.
+
+
+	Jugadores{
+		name
+		lastname
+		dorsal
+		posicion
+		goles,
+		tarjetas
+	}
+	
+	//funcion agregar, editar, eliminar, (TODO POR Team)
+	// agregar goles, tarjetas
+	
+	Partidos{
+		equipo1 = objectId [teams],
+		equipo2 = objectId [teams],
+		marcardor1 = number,
+		marcador2 = number,
+		faltas1 = number,
+		faltas2 = number,
+	}
+
+	// función generar partidos por número de equipos en liga...
+	// agregar marcador, agregar faltas, según goles agregar punto en tabla teams
+
+	Jornada{
+		Name,
+		Description,
+		Fecha,
+		partido = objectId[Partidos],
+	}
+	// generar jornadas dentro del rango de fechas seleccionada.
+	// se generaran el día que elija el usuario (cada sabado, cada domingo)
+	// se generan jornadas automaticamente al igual que partidos, si son 5 equipos son 4 jornadas.
+
+
+
+	FRONT ==================================
+	ZUCKY - register, login, landing page, carousel, footer
+	JUSTYN - inicioAdminPage, InicioUsuario, partidos, historial
+	DAVIS - estructura de componentes, parallax, graficas, ligas, jornadas
+	
+	COLORES :  NEGRO, AZUL.	
+
+	BACK ======================================
+	DIEGO -
+	JEREMÍAS -
+	YAX - 
